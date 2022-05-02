@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="fa44ba26-e686-4694-9c73-89912493cd3a" name="Carrot" url="http://www.jaeyoo.shop">
+        <fileTransfer rootFolder="/var/www/spring-boot" accessType="SFTP" host="54.180.225.59" port="22" sshConfigId="b8e5c946-f8fe-48ce-82f1-ed8338aa85e9" sshConfig="ubuntu@54.180.225.59:22 key" keyPair="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
