@@ -17,7 +17,7 @@ import static com.example.demo.config.BaseResponseStatus.*;
 /**
  * Service란?
  * Controller에 의해 호출되어 실제 비즈니스 로직과 트랜잭션을 처리: Create, Update, Delete 의 로직 처리
- * 요청한 작업을 처리하는 관정을 하나의 작업으로 묶음
+ * 요청한 작업을 처리하는 과정을 하나의 작업으로 묶음
  * dao를 호출하여 DB CRUD를 처리 후 Controller로 반환
  */
 @Service    // [Business Layer에서 Service를 명시하기 위해서 사용] 비즈니스 로직이나 respository layer 호출하는 함수에 사용된다.
@@ -68,7 +68,7 @@ public class UserService {
         }
     }
 
-    // 회원정보 수정(Patch)
+    // 닉네임 수정(Patch)
     public void modifyUserName(PatchUserReq patchUserReq) throws BaseException {
         try {
             int result = userDao.modifyUserName(patchUserReq); // 해당 과정이 무사히 수행되면 True(1), 그렇지 않으면 False(0)입니다.
@@ -76,6 +76,18 @@ public class UserService {
                 throw new BaseException(MODIFY_FAIL_USERNAME);
             }
         } catch (Exception exception) { // DB에 이상이 있는 경우 에러 메시지를 보냅니다.
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    //유저 사진 변경(Patch)
+    public void modifyUserImg(PatchUserImgReq patchUserImgReq) throws  BaseException {
+        try {
+            int result = userDao.modifyUserImg(patchUserImgReq);
+            if (result == 0){
+                throw new BaseException(MODIFY_FAIL_USERIMG);
+            }
+        } catch (Exception e){
             throw new BaseException(DATABASE_ERROR);
         }
     }

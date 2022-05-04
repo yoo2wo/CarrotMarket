@@ -58,7 +58,7 @@ public class UserController {
      */
     // Body
     @ResponseBody
-    @PostMapping("/sign-up")    // POST 방식의 요청을 매핑하기 위한 어노테이션
+    @PostMapping("")    // POST 방식의 요청을 매핑하기 위한 어노테이션
     public BaseResponse<PostUserRes> createUser(@RequestBody PostUserReq postUserReq) {
         //  @RequestBody란, 클라이언트가 전송하는 HTTP Request Body(우리는 JSON으로 통신하니, 이 경우 body는 JSON)를 자바 객체로 매핑시켜주는 어노테이션
         // TODO: email 관련한 짧은 validation 예시입니다. 그 외 더 부가적으로 추가해주세요!
@@ -70,6 +70,7 @@ public class UserController {
         if (!isRegexEmail(postUserReq.getEmail())) {
             return new BaseResponse<>(POST_USERS_INVALID_EMAIL);
         }
+        // TODO: email 중복되었을떄? => 의미적 validation으로 service에서 해주어야한다.
         try {
             PostUserRes postUserRes = userService.createUser(postUserReq);
             return new BaseResponse<>(postUserRes);
@@ -126,25 +127,21 @@ public class UserController {
             return new BaseResponse<>((exception.getStatus()));
         }
     }
-    /**
-
-
-
 
     /**
      * 회원 1명 조회 API
-     * [GET] /users/:userIdx
+     * [GET] /users/:userId
      */
     // Path-variable
     @ResponseBody
-    @GetMapping("/{userIdx}") // (GET) 127.0.0.1:9000/app/users/:userIdx
-    public BaseResponse<GetUserRes> getUser(@PathVariable("userIdx") int userIdx) {
+    @GetMapping("/{userId}") // (GET) 127.0.0.1:9000/app/users/:userId
+    public BaseResponse<GetUserRes> getUser(@PathVariable("userIdx") int userId) {
         // @PathVariable RESTful(URL)에서 명시된 파라미터({})를 받는 어노테이션, 이 경우 userId값을 받아옴.
         //  null값 or 공백값이 들어가는 경우는 적용하지 말 것
         //  .(dot)이 포함된 경우, .을 포함한 그 뒤가 잘려서 들어감
         // Get Users
         try {
-            GetUserRes getUserRes = userProvider.getUser(userIdx);
+            GetUserRes getUserRes = userProvider.getUser(userId);
             return new BaseResponse<>(getUserRes);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
@@ -154,11 +151,11 @@ public class UserController {
 
     /**
      * 유저정보변경 API
-     * [PATCH] /users/:userIdx
+     * [PATCH] /users/:userId
      */
     @ResponseBody
-    @PatchMapping("/{userIdx}")
-    public BaseResponse<String> modifyUserName(@PathVariable("userIdx") int userIdx, @RequestBody User user) {
+    @PatchMapping("/{userId}")
+    public BaseResponse<String> modifyUserName(@PathVariable("userId") int userId, @RequestBody User user) {
         try {
 /**
   *********** 해당 부분은 7주차 - JWT 수업 후 주석해체 해주세요!  ****************
@@ -171,13 +168,33 @@ public class UserController {
             //같다면 유저네임 변경
   **************************************************************************
  */
-            PatchUserReq patchUserReq = new PatchUserReq(userIdx, user.getNickname());
+            System.out.println(user.toString());
+            PatchUserReq patchUserReq = new PatchUserReq(userId, user.getNickname());
             userService.modifyUserName(patchUserReq);
 
             String result = "회원정보가 수정되었습니다.";
             return new BaseResponse<>(result);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    /**
+     *  [추가 6]
+     *  유저 이미지 변경 API
+     *  [PATCH] /users/:userId/image
+     */
+    @ResponseBody
+    @PatchMapping("/{userId}/image")
+    public BaseResponse<String> modifyUserImage(@PathVariable("userId") int userId, @RequestBody User user){
+        try {
+            PatchUserImgReq patchUserImgReq = new PatchUserImgReq(userId, user.getImageUrl());
+            userService.modifyUserImg(patchUserImgReq);
+
+            String result = "회원 이미지가 수정되었습니다.";
+            return new BaseResponse<>(result);
+        } catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
         }
     }
 }
