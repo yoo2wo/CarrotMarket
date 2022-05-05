@@ -70,7 +70,7 @@ public class UserController {
         if (!isRegexEmail(postUserReq.getEmail())) {
             return new BaseResponse<>(POST_USERS_INVALID_EMAIL);
         }
-        // TODO: email 중복되었을떄? => 의미적 validation으로 service에서 해주어야한다.
+        // email 중복되었을떄? => 의미적 validation으로 service에서 해주어야한다.
         try {
             PostUserRes postUserRes = userService.createUser(postUserReq);
             return new BaseResponse<>(postUserRes);
@@ -84,13 +84,29 @@ public class UserController {
      * [POST] /users/logIn
      */
     @ResponseBody
-    @PostMapping("/log-in")
+    @PostMapping("/login")
     public BaseResponse<PostLoginRes> logIn(@RequestBody PostLoginReq postLoginReq) {
         try {
+            //A, D, B, I
             // TODO: 로그인 값들에 대한 형식적인 validatin 처리해주셔야합니다!
             // TODO: 유저의 status ex) 비활성화된 유저, 탈퇴한 유저 등을 관리해주고 있다면 해당 부분에 대한 validation 처리도 해주셔야합니다.
             PostLoginRes postLoginRes = userProvider.logIn(postLoginReq);
-            return new BaseResponse<>(postLoginRes);
+            // status validation
+            if (postLoginReq.getEmail() == null) {
+                return new BaseResponse<>(POST_USERS_EMPTY_EMAIL);
+            }
+            if (!isRegexEmail(postLoginReq.getEmail())) {
+                return new BaseResponse<>(POST_USERS_INVALID_EMAIL);
+            }
+            if (userProvider.checkStatus(postLoginRes.getUserId()) == 'A'){
+                return new BaseResponse<>(postLoginRes);
+            } else if (userProvider.checkStatus(postLoginRes.getUserId()) == 'D') {
+                return new BaseResponse<>(USERS_STATUS_DELETE);
+            } else if (userProvider.checkStatus(postLoginRes.getUserId()) == 'I') {
+                return new BaseResponse<>(USERS_STATUS_INACTIVE);
+            } else {
+                return new BaseResponse<>(USERS_STATUS_ERROR);
+            }
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -188,10 +204,30 @@ public class UserController {
     @PatchMapping("/{userId}/image")
     public BaseResponse<String> modifyUserImage(@PathVariable("userId") int userId, @RequestBody User user){
         try {
+            System.out.println(user.toString());
             PatchUserImgReq patchUserImgReq = new PatchUserImgReq(userId, user.getImageUrl());
             userService.modifyUserImg(patchUserImgReq);
 
             String result = "회원 이미지가 수정되었습니다.";
+            return new BaseResponse<>(result);
+        } catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    /**
+     *  [추가 7]
+     *  유저 이미지 삭제 API
+     *  [DELETE] /users/:userId/image
+     */
+    @ResponseBody
+    @DeleteMapping("/{userId}/image")
+    public BaseResponse<String> deleteUserImage(@PathVariable("userId") int userId){
+        try {
+            PatchUserImgReq patchUserImgReq = new PatchUserImgReq(userId, null);
+            userService.modifyUserImg(patchUserImgReq);
+
+            String result = "회원 이미지가 삭제되었습니다.";
             return new BaseResponse<>(result);
         } catch (BaseException e){
             return new BaseResponse<>(e.getStatus());

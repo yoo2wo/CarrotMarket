@@ -75,6 +75,15 @@ public class UserDao {
                 checkEmailParams); // checkEmailQuery, checkEmailParams를 통해 가져온 값(intgud)을 반환한다. -> 쿼리문의 결과(존재하지 않음(False,0),존재함(True, 1))를 int형(0,1)으로 반환됩니다.
     }
 
+    // 유저 status 확인 (추가)
+    public char checkStatus(int userId){
+        String checkStatusQuery = "select status from user where user_id = ? ";
+        int checkStatusParams = userId;
+        return this.jdbcTemplate.queryForObject(checkStatusQuery,
+                char.class,
+                checkStatusParams);
+    }
+
     // 회원 닉네임 변경
     public int modifyUserName(PatchUserReq patchUserReq) {
         String modifyUserNameQuery = "update user set nickname = ? where user_id = ? "; // 해당 userIdx를 만족하는 User를 해당 nickname으로 변경한다.
