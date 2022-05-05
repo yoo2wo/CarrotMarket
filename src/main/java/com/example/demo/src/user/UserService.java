@@ -55,8 +55,8 @@ public class UserService {
             throw new BaseException(PASSWORD_ENCRYPTION_ERROR);
         }
         try {
-            int userIdx = userDao.createUser(postUserReq);
-            return new PostUserRes(userIdx);
+            int userId = userDao.createUser(postUserReq);
+            return new PostUserRes(userId);
 
 //  *********** 해당 부분은 7주차 수업 후 주석해제하서 대체해서 사용해주세요! ***********
 //            //jwt 발급.
