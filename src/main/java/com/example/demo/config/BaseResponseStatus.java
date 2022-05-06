@@ -57,6 +57,11 @@ public enum BaseResponseStatus {
     MODIFY_FAIL_USERNAME(false,4014,"유저네임 수정 실패"),
     MODIFY_FAIL_USERIMG(false, 4015, "유저이미지 수정 실패"), //추가
 
+    MODIFY_FAIL_PRODUCT(false, 4016, "상품 수정 실패"), //추가
+    DELETE_FAIL_PRODUCT(false, 4017, "상품 삭제 실패"),
+    CREATE_FAIL_WISH(false, 4018, "관심 등록 실패"),
+    DELETE_FAIL_WISH(false, 4019, "관심 해제 실패"),
+
     PASSWORD_ENCRYPTION_ERROR(false, 4011, "비밀번호 암호화에 실패하였습니다."),
     PASSWORD_DECRYPTION_ERROR(false, 4012, "비밀번호 복호화에 실패하였습니다.");
 

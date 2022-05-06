@@ -2,6 +2,7 @@ package com.example.demo.src.product;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponseStatus;
+import com.example.demo.src.product.model.GetProductDetailRes;
 import com.example.demo.src.product.model.GetProductRes;
 import com.example.demo.utils.JwtService;
 import org.slf4j.Logger;
@@ -38,10 +39,24 @@ public class ProductProvider {
 
     public List<GetProductRes> getProductsByNickname(String nickname) throws BaseException{
         try {
+            //Todo : 의미적 validation 없는 nickname에 대해서 check 쿼리를 만드는게 좋을까? 괜히 네트워크만 쓰는 것같음
             List<GetProductRes> getProductRes = productDao.getProductsByNickname(nickname);
+//            if (getProductRes.size() == 0)
+//                throw new BaseException()
             return getProductRes;
         } catch (Exception e){
             System.out.println(e.getCause());
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public GetProductDetailRes getProduct(int productId) throws BaseException{
+        try {
+            GetProductDetailRes getProductDetailRes = productDao.getProduct(productId);
+            System.out.println(getProductDetailRes.toString()); //
+            return getProductDetailRes;
+        } catch (Exception e){
+            System.out.println(e);
             throw new BaseException(DATABASE_ERROR);
         }
     }

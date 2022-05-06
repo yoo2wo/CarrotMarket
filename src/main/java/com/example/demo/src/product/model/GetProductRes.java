@@ -12,6 +12,7 @@ import lombok.ToString;
 public class GetProductRes {
     private long productId;
     private String imageUrl;
+    private String nickname;
     private long secDiff; // 나중에 바꿔주어야할수있다.
     private long price;
     private String title;

@@ -13,8 +13,8 @@ public class Product {
     private int categoryId;
     private String title;
     private String mainText;
-    private float price;
-    private String pricePropsal;
+    private Long price;
+    private String priceProposal;
     private String img1;
     private String img2;
     private String img3;
