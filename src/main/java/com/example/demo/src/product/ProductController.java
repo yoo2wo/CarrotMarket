@@ -60,18 +60,32 @@ public class ProductController {
     /**
      * 상품 조회 API
      * [Get] /app/products
+     * 닉네임, 카테고리
      */
     @ResponseBody
     @GetMapping("")
     public BaseResponse<List<GetProductRes>> getProducts(@RequestParam(required = false) String nickname) {
         try {
             if (nickname == null){
-
                 List<GetProductRes> getProductRes = productProvider.getProducts();
-
                 return new BaseResponse<>(getProductRes);
             }
             List<GetProductRes> getProductRes = productProvider.getProductsByNickname(nickname);
+            return new BaseResponse<>(getProductRes);
+        } catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    /**
+     * 상품 카테고리별 조회 API
+     * [Get] /app/products/:categoryId
+     */
+    @ResponseBody
+    @GetMapping("categories/{categoryId}")
+    public BaseResponse<List<GetProductRes>> getProductsByCategoryId(@PathVariable long categoryId){
+        try {
+            List<GetProductRes> getProductRes = productProvider.getProductsByCategoryId(categoryId);
             return new BaseResponse<>(getProductRes);
         } catch (BaseException e){
             return new BaseResponse<>(e.getStatus());
@@ -106,7 +120,7 @@ public class ProductController {
             if (userId != userIdByJwt)
                 return new BaseResponse<>(INVALID_USER_JWT);
             //*************************************************
-            // Todo : request 받을때 수정하지않는 부분은 그대로 받아오고 싶다 이부분은 프론트에서 해주어야하나?
+
             PatchProductReq patchProductReq = new PatchProductReq(
                     productId,
                     product.getImg1(),

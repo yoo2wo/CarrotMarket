@@ -108,6 +108,42 @@ public class ProductDao {
         );
     }
 
+    public List<GetProductRes> getProductsByCategoryId (long categoryId){
+        String getProductsByCategoryIdQuery = "select p.product_id, u.nickname, p.user_id as seller_id ,p.title, pc.product_category_name" +
+                ",a.area_name ,p.product_status, p.price, wish.wish_count,chat.chat_count,p.refresh_count" +
+                ", p.refreshed_at ,p.image_url_1, TIMESTAMPDIFF(SECOND, p.created_at, CURRENT_TIMESTAMP()) as sec_diff " +
+                "from product as p " +
+                "inner join user as u " +
+                "on u.user_id = p.user_id " +
+                "inner join area as a " +
+                "on a.area_id = p.area_id " +
+                "inner join product_category as pc " +
+                "on pc.product_category_id = p.product_category_id " +
+                "left outer join (select product_id, count(wish_id) as wish_count" +
+                " from wish " +
+                " group by product_id ) as wish " +
+                "on wish.product_id = p.product_id " +
+                "left outer join (select product_id, count(chat_room_id) as chat_count" +
+                " from chat_room" +
+                " group by product_id ) as chat " +
+                "on chat.product_id=p.product_id " +
+                "where p.product_category_id = ?";
+        long getProductsByCategoryIdParams = categoryId;
+        return this.jdbcTemplate.query(getProductsByCategoryIdQuery,
+                (rs, rowNum) -> new GetProductRes(
+                        rs.getLong("product_id"),
+                        rs.getString("image_url_1"),
+                        rs.getString("nickname"),
+                        rs.getLong("sec_diff"),
+                        rs.getLong("price"),
+                        rs.getString("title"),
+                        rs.getString("area_name"),
+                        rs.getLong("wish_count"),
+                        rs.getLong("chat_count")),
+                getProductsByCategoryIdParams);
+    }
+
+
     // 상품 상세 조회
     public GetProductDetailRes getProduct(int productId) {
         //사진들, 유저명, 유저위치, 유저 온도, 유저 사진, title, 카테고리, 시간, 본문, 가격, 채팅수, 관심수, 조회수
