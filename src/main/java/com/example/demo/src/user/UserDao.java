@@ -65,6 +65,16 @@ public class UserDao {
         String lastInserIdQuery = "select last_insert_id()"; // 가장 마지막에 삽입된(생성된) id값은 가져온다.
         return this.jdbcTemplate.queryForObject(lastInserIdQuery, int.class); // 해당 쿼리문의 결과 마지막으로 삽인된 유저의 userId번호를 반환한다.
     }
+    //kakao 회원가입
+    public int createKakaoUser(String email){
+        String createKakaoUserQuery = "insert into user (email, nickname) VALUES (?,?)";
+        Object[] createKakaoUserParams = new Object[]{email, email};
+        this.jdbcTemplate.update(createKakaoUserQuery, createKakaoUserParams);
+
+        String lastInserIdQuery = "select last_insert_id()"; // 가장 마지막에 삽입된(생성된) id값은 가져온다.
+        return this.jdbcTemplate.queryForObject(lastInserIdQuery, int.class);
+    }
+
 
     // 이메일 확인
     public int checkEmail(String email) {
@@ -73,6 +83,15 @@ public class UserDao {
         return this.jdbcTemplate.queryForObject(checkEmailQuery,
                 int.class,
                 checkEmailParams); // checkEmailQuery, checkEmailParams를 통해 가져온 값(intgud)을 반환한다. -> 쿼리문의 결과(존재하지 않음(False,0),존재함(True, 1))를 int형(0,1)으로 반환됩니다.
+    }
+
+    //이메일로 userId 조회
+    public int getUserIdByEmail(String email){
+        String getUserIdByEmailQuery = "select user_id from user where email = ?";
+        String getUserIdByEmailParams = email;
+        return this.jdbcTemplate.queryForObject(getUserIdByEmailQuery,
+                int.class,
+                getUserIdByEmailParams);
     }
 
     // 유저 status 확인 (추가)

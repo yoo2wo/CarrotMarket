@@ -9,6 +9,9 @@ import com.example.demo.utils.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
+import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 
 
@@ -173,17 +176,17 @@ public class UserController {
     @PatchMapping("/{userId}")
     public BaseResponse<String> modifyUserName(@PathVariable("userId") int userId, @RequestBody User user) {
         try {
-/**
-  *********** 해당 부분은 7주차 - JWT 수업 후 주석해체 해주세요!  ****************
+
+  //*********** 해당 부분은 7주차 - JWT 수업 후 주석해체 해주세요!  ****************
             //jwt에서 idx 추출.
-            int userIdxByJwt = jwtService.getUserIdx();
+            int userIdByJwt = jwtService.getUserId();
             //userIdx와 접근한 유저가 같은지 확인
-            if(userIdx != userIdxByJwt){
+            if(userId != userIdByJwt){
                 return new BaseResponse<>(INVALID_USER_JWT);
             }
             //같다면 유저네임 변경
-  **************************************************************************
- */
+  //**************************************************************************
+
             System.out.println(user.toString());
             PatchUserReq patchUserReq = new PatchUserReq(userId, user.getNickname());
             userService.modifyUserName(patchUserReq);
@@ -191,6 +194,7 @@ public class UserController {
             String result = "회원정보가 수정되었습니다.";
             return new BaseResponse<>(result);
         } catch (BaseException exception) {
+            System.out.println(exception.getStatus());
             return new BaseResponse<>((exception.getStatus()));
         }
     }
@@ -204,6 +208,15 @@ public class UserController {
     @PatchMapping("/{userId}/image")
     public BaseResponse<String> modifyUserImage(@PathVariable("userId") int userId, @RequestBody User user){
         try {
+            //*********** 해당 부분은 7주차 - JWT 수업 후 주석해체 해주세요!  ****************
+            //jwt에서 idx 추출.
+            int userIdByJwt = jwtService.getUserId();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userId != userIdByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            //같다면 유저네임 변경
+            //**************************************************************************
             System.out.println(user.toString());
             PatchUserImgReq patchUserImgReq = new PatchUserImgReq(userId, user.getImageUrl());
             userService.modifyUserImg(patchUserImgReq);
@@ -224,6 +237,15 @@ public class UserController {
     @DeleteMapping("/{userId}/image")
     public BaseResponse<String> deleteUserImage(@PathVariable("userId") int userId){
         try {
+            //*********** 해당 부분은 7주차 - JWT 수업 후 주석해체 해주세요!  ****************
+            //jwt에서 idx 추출.
+            int userIdByJwt = jwtService.getUserId();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userId != userIdByJwt){
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            //같다면 유저네임 변경
+            //**************************************************************************
             PatchUserImgReq patchUserImgReq = new PatchUserImgReq(userId, null);
             userService.modifyUserImg(patchUserImgReq);
 
@@ -233,4 +255,36 @@ public class UserController {
             return new BaseResponse<>(e.getStatus());
         }
     }
+
+    /**
+     * 추가
+     * kakao 로그인
+     */
+    @ResponseBody
+    @GetMapping("/kakao")
+    public BaseResponse<PostUserRes>  kakaoCallback(@RequestParam String code) throws BaseException {
+        System.out.println(code);
+        String access_Token = userService.getKaKaoAccessToken(code);
+        String email = userService.getKakaoUser(access_Token);
+
+        if (email == null) {
+            return new BaseResponse<>(POST_USERS_EMPTY_EMAIL);
+        }
+        try {
+            PostUserRes postUserRes = userService.createKakaoUser(email);
+            return new BaseResponse<>(postUserRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+//    @GetMapping(value="/kakao/logout")
+//    public String logout(HttpSession session) {
+//        System.out.println((String)session.getAttribute("access_token"));
+//        userService.kakaoLogout((String)session.getAttribute("access_token"));
+//
+//        session.removeAttribute("access_token");
+//        session.removeAttribute("userId");
+//        return "index";
+//    }
 }

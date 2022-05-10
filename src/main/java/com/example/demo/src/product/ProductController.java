@@ -2,6 +2,7 @@ package com.example.demo.src.product;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
+import com.example.demo.config.BaseResponseStatus;
 import com.example.demo.src.product.model.*;
 import com.example.demo.utils.JwtService;
 import org.slf4j.Logger;
@@ -11,6 +12,8 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static com.example.demo.config.BaseResponseStatus.*;
 
 @RestController
 @RequestMapping("/app/products")
@@ -40,6 +43,12 @@ public class ProductController {
     @PostMapping("")
     public BaseResponse<PostProductRes> createProduct(@RequestBody PostProductReq postProductReq){
          try {
+             //jwt 인가 부분 **************************************
+             int userIdByJwt = jwtService.getUserId();
+             if (postProductReq.getUserId() != userIdByJwt)
+                    return new BaseResponse<>(INVALID_USER_JWT);
+             //*************************************************
+
              System.out.println(postProductReq);
              PostProductRes postProductRes = productService.createProduct(postProductReq);
              return new BaseResponse<>(postProductRes);
@@ -89,9 +98,14 @@ public class ProductController {
      * [Patch] /app/products/:productId
      */
     @ResponseBody
-    @PatchMapping("{productId}")
-    public BaseResponse<String> modifyProduct(@PathVariable("productId") int productId, @RequestBody Product product) {
+    @PatchMapping("{productId}/{userId}")
+    public BaseResponse<String> modifyProduct(@PathVariable("productId") int productId, @PathVariable("userId") int userId, @RequestBody Product product) {
         try {
+            //jwt 인가 부분 **************************************
+            int userIdByJwt = jwtService.getUserId();
+            if (userId != userIdByJwt)
+                return new BaseResponse<>(INVALID_USER_JWT);
+            //*************************************************
             // Todo : request 받을때 수정하지않는 부분은 그대로 받아오고 싶다 이부분은 프론트에서 해주어야하나?
             PatchProductReq patchProductReq = new PatchProductReq(
                     productId,
@@ -117,12 +131,17 @@ public class ProductController {
     /**
      * 상품 삭제 API
      * (실제 삭제는 아닌 status만 변경한다.)
-     * [Delete] /app/products/:productId
+     * [Delete] /app/products/:productId/:userId
      */
     @ResponseBody
-    @DeleteMapping("{productId}")
-    public BaseResponse<String> deleteProduct(@PathVariable("productId") int productId){
+    @DeleteMapping("{productId}/{userId}")
+    public BaseResponse<String> deleteProduct(@PathVariable("productId") int productId, @PathVariable("userId") int userId){
         try {
+            //jwt 인가 부분 *************************************
+            int userIdByJwt = jwtService.getUserId();
+            if (userId != userIdByJwt)
+                return new BaseResponse<>(INVALID_USER_JWT);
+            //*************************************************
             DeleteProductReq deleteProductReq = new DeleteProductReq(productId);
             productService.deleteProduct(deleteProductReq);
 
