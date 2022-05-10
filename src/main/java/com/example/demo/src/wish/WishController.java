@@ -9,11 +9,11 @@ import com.example.demo.utils.JwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static com.example.demo.config.BaseResponseStatus.INVALID_USER_JWT;
 
 
 @RestController
@@ -43,6 +43,11 @@ public class WishController {
     @PostMapping("{productId}/users/{userId}")
     public BaseResponse<String> createWish(@PathVariable("productId") int productId, @PathVariable("userId") int userId) {
         try {
+            //jwt 인가 부분 **************************************
+            int userIdByJwt = jwtService.getUserId();
+            if (userId != userIdByJwt)
+                return new BaseResponse<>(INVALID_USER_JWT);
+            //*************************************************
             PostWishReq postWishReq = new PostWishReq(productId, userId);
             wishService.createWish(postWishReq);
 
@@ -61,6 +66,11 @@ public class WishController {
     @DeleteMapping("{productId}/users/{userId}")
     public BaseResponse<String> deleteWish(@PathVariable("productId") int productId, @PathVariable("userId") int userId) {
         try {
+            //jwt 인가 부분 **************************************
+            int userIdByJwt = jwtService.getUserId();
+            if (userId != userIdByJwt)
+                return new BaseResponse<>(INVALID_USER_JWT);
+            //*************************************************
             DeleteWishReq deleteWishReq = new DeleteWishReq(productId, userId);
             wishService.deleteWish(deleteWishReq);
 
@@ -79,6 +89,11 @@ public class WishController {
     @GetMapping("{userId}")
     public BaseResponse<List<GetWishProductsRes>> getWishProducts(@PathVariable("userId") int userId){
         try {
+            //jwt 인가 부분 **************************************
+            int userIdByJwt = jwtService.getUserId();
+            if (userId != userIdByJwt)
+                return new BaseResponse<>(INVALID_USER_JWT);
+            //*************************************************
             List<GetWishProductsRes> getWishProductsRes = wishProvider.getWishProducts(userId);
             return new BaseResponse<>(getWishProductsRes);
         } catch (BaseException e){
