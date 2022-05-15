@@ -43,7 +43,7 @@ public class ChatDao {
     }
 
     //채팅방 내용 조회
-    public List<GetChatRes> getChat(GetChatReq getChatReq){
+    public List<GetChatRes> getChat(long chatRoomId, long userId){
         String getChatQuery ="select r.chat_room_id, u.user_id, u.nickname, u.profile_img_url, u.manner_temp ,m.chat_message_id, m.message, DATE_FORMAT(m.created_at, '%p %H : %i') as msg_time " +
                 "from chat_room as r " +
                 "right outer join chat_message as m " +
@@ -52,7 +52,7 @@ public class ChatDao {
                 "on u.user_id = m.user_id " +
                 "where m.chat_room_id = ? " +
                 "order by m.chat_message_id asc;";
-        long getChatParams = getChatReq.getChatRoomId();
+        long getChatParams = chatRoomId;
         return this.jdbcTemplate.query(getChatQuery,
                 (rs, rowNum) -> new GetChatRes(
                         rs.getLong("chat_room_id"),

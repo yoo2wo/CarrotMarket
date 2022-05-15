@@ -24,7 +24,7 @@ public class ProductDao {
                 "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
         Object[] createProductParams = new Object[]{
                 postProductReq.getUserId(), postProductReq.getAreaId(), postProductReq.getCategoryId(),
-                postProductReq.getTitle(), postProductReq.getMainText(), postProductReq.getPrice(), postProductReq.getPricePropsal(),
+                postProductReq.getTitle(), postProductReq.getMainText(), postProductReq.getPrice(), postProductReq.getPriceProposal(),
                 postProductReq.getImg1(), postProductReq.getImg2(), postProductReq.getImg3(), postProductReq.getImg4(), postProductReq.getImg5()
         };
         this.jdbcTemplate.update(createProductQuery, createProductParams);
@@ -147,7 +147,7 @@ public class ProductDao {
     // 상품 상세 조회
     public GetProductDetailRes getProduct(int productId) {
         //사진들, 유저명, 유저위치, 유저 온도, 유저 사진, title, 카테고리, 시간, 본문, 가격, 채팅수, 관심수, 조회수
-        String getProductQuery = "select p.product_id , u.nickname, a.area_name, u.manner_temp, p.image_url_1, p.image_url_2, p.image_url_3, p.image_url_4, p.image_url_5 " +
+        String getProductQuery = "select p.product_id , u.user_id,u.nickname, a.area_name, u.manner_temp, p.image_url_1, p.image_url_2, p.image_url_3, p.image_url_4, p.image_url_5 " +
                 ", u.profile_img_url, pc.product_category_name,wish.wish_count, chat.chat_count " +
                 ",p.title, p.main_text , p.price , p.price_proposal, p.product_status, p.refresh_count " +
                 ", p.refreshed_at, p.view_count, TIMESTAMPDIFF(SECOND, p.created_at, CURRENT_TIMESTAMP()) as sec_diff " +
@@ -166,7 +166,7 @@ public class ProductDao {
                 "from chat_room " +
                 "group by product_id ) as chat " +
                 "on chat.product_id=p.product_id " +
-                "where p.product_id =?";
+                "where p.product_id = ?";
         int getProductParams = productId;
         return this.jdbcTemplate.queryForObject(getProductQuery,
                 (rs, rowNum) -> new GetProductDetailRes(
@@ -175,6 +175,7 @@ public class ProductDao {
                         rs.getString("image_url_3"),
                         rs.getString("image_url_4"),
                         rs.getString("image_url_5"),
+                        rs.getLong("user_id"),
                         rs.getString("nickname"),
                         rs.getInt("manner_temp"),
                         rs.getString("profile_img_url"),

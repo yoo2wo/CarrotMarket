@@ -15,6 +15,7 @@ public class GetProductDetailRes {
     private String image_3;
     private String image_4;
     private String image_5;
+    private long userId;
     private String nickname;
     private int userTemp;
     private String userImg;

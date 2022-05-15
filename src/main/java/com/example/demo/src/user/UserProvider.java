@@ -99,6 +99,7 @@ public class UserProvider {
             GetUserRes getUserRes = userDao.getUser(userId);
             return getUserRes;
         } catch (Exception exception) {
+            System.out.println(exception.getCause());
             throw new BaseException(DATABASE_ERROR);
         }
     }

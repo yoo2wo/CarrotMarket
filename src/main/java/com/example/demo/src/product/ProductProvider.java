@@ -9,12 +9,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static com.example.demo.config.BaseResponseStatus.DATABASE_ERROR;
 
 @Service
+@Transactional
 public class ProductProvider {
 
     private final ProductDao productDao;
@@ -39,10 +41,8 @@ public class ProductProvider {
 
     public List<GetProductRes> getProductsByNickname(String nickname) throws BaseException{
         try {
-            //Todo : 의미적 validation 없는 nickname에 대해서 check 쿼리를 만드는게 좋을까? 괜히 네트워크만 쓰는 것같음
+            //Todo : 의미적 validation : 없는 nickname에 대해서 check 쿼리를 만드는게 좋을까? 괜히 네트워크만 쓰는 것같음
             List<GetProductRes> getProductRes = productDao.getProductsByNickname(nickname);
-//            if (getProductRes.size() == 0)
-//                throw new BaseException()
             return getProductRes;
         } catch (Exception e){
             System.out.println(e.getCause());
@@ -64,10 +64,9 @@ public class ProductProvider {
     public GetProductDetailRes getProduct(int productId) throws BaseException{
         try {
             GetProductDetailRes getProductDetailRes = productDao.getProduct(productId);
-            System.out.println(getProductDetailRes.toString()); //
             return getProductDetailRes;
         } catch (Exception e){
-            System.out.println(e);
+            System.out.println(e.getCause());
             throw new BaseException(DATABASE_ERROR);
         }
     }

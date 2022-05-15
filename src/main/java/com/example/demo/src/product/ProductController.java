@@ -59,7 +59,7 @@ public class ProductController {
 
     /**
      * 상품 조회 API
-     * [Get] /app/products
+     * [Get] /app/products?nickname=
      * 닉네임, 카테고리
      */
     @ResponseBody
@@ -109,7 +109,7 @@ public class ProductController {
 
     /**
      * 상품 수정 API
-     * [Patch] /app/products/:productId
+     * [Patch] /app/products/:productId/:userId
      */
     @ResponseBody
     @PatchMapping("{productId}/{userId}")

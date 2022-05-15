@@ -14,7 +14,7 @@ public class PostProductReq {
     private String title;
     private String mainText;
     private float price;
-    private String pricePropsal;
+    private String priceProposal;
     private String img1;
     private String img2;
     private String img3;

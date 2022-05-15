@@ -28,10 +28,10 @@ public class ChatProvider {
     }
 
     //채팅 내용
-    public List<GetChatRes> getChat(GetChatReq getChatReq) throws BaseException {
+    public List<GetChatRes> getChat(long chatRoomId, long userId) throws BaseException {
         try {
             //Todo : 채팅방이 해당 유저의 채팅방지 검증 필요
-             List<GetChatRes> getChatRes = chatDao.getChat(getChatReq);
+             List<GetChatRes> getChatRes = chatDao.getChat(chatRoomId, userId);
              return getChatRes;
         } catch (Exception e){
             System.out.println(e.getCause());
