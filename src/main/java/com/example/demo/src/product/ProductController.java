@@ -60,7 +60,7 @@ public class ProductController {
     /**
      * 상품 조회 API
      * [Get] /app/products?nickname=
-     * 닉네임, 카테고리
+     * 닉네임
      */
     @ResponseBody
     @GetMapping("")
@@ -76,6 +76,18 @@ public class ProductController {
             return new BaseResponse<>(e.getStatus());
         }
     }
+    // paging 추가
+    @ResponseBody
+    @GetMapping("paging")
+    public BaseResponse<List<GetProductRes>> getProductsPaging(@RequestParam(required = false, defaultValue =  "1") int pageNum){
+        try {
+            List<GetProductRes> getProductsPaging = productProvider.getProductsPaging(pageNum);
+            return new BaseResponse<>(getProductsPaging);
+        } catch (BaseException e){
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
 
     /**
      * 상품 카테고리별 조회 API

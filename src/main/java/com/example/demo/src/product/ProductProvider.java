@@ -50,6 +50,18 @@ public class ProductProvider {
         }
     }
 
+    //페이징
+    public List<GetProductRes> getProductsPaging(int pageNum) throws BaseException{
+        try {
+            int size = 5; /** 페이지당 데이터 개수 */
+            List<GetProductRes> getProductRes = productDao.getProductsPaging(pageNum, size);
+            return getProductRes;
+        } catch (Exception e){
+            System.out.println(e.getCause());
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
     public List<GetProductRes> getProductsByCategoryId(long categoryId) throws BaseException{
         try {
             //Todo : 의미적 validation 없는 nickname에 대해서 check 쿼리를 만드는게 좋을까? 괜히 네트워크만 쓰는 것같음
